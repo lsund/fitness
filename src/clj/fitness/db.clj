@@ -25,7 +25,11 @@
 
 (defn value [db table column id]
   (-> db
-      (jdbc/query [(str "SELECT " (name column) " from " (name table) " where id = ?") id])
+      (jdbc/query [(str "SELECT "
+                        (name column)
+                        " from "
+                        (name table)
+                        " where id = ?") id])
       first
       column))
 

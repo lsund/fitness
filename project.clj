@@ -13,14 +13,12 @@
                  [hiccup "1.0.5"]
                  [com.stuartsierra/component "0.4.0"]
                  [com.taoensso/timbre "4.10.0"]]
-  :plugins [[lein-figwheel "0.5.15"]
-            [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
-  :source-paths ["src/clj" "src/cljs"]
+  :source-paths ["src/clj"]
   :ring {:handler fitness.core/new-handler}
   :main fitness.main
   :figwheel {:css-dirs ["resources/public/css"]}
   :repl-options {:init-ns user
                  :timeout 120000}
-  :profiles {:dev {:source-paths ["src/clj" "src/cljs" "dev"]
+  :profiles {:dev {:source-paths ["src/clj" "dev"]
                    :clean-targets ^{:protect false} ["resources/public/js/compiled"
                                                      :target-path]}})

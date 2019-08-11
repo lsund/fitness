@@ -1,12 +1,16 @@
 (ns fitness.db
   "Database component"
   (:require [clojure.java.jdbc :as jdbc]
+            [clojure.edn :as edn]
+            [clj-time.coerce :refer [to-sql-date]]
             [com.stuartsierra.component :as c]))
 
 (defn pg-db [config]
   {:dbtype "postgresql"
    :dbname (:name config)
    :user "postgres"})
+
+(def pg-db-val (pg-db {:name "fitness"}))
 
 (defrecord Db [db db-config]
   c/Lifecycle
@@ -47,3 +51,32 @@
 
 (defn insert-row [db table insert-map]
   (jdbc/insert! db table insert-map))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Trainer -> Finances
+
+(defn parse-int [s]
+  {:pre [(or (integer? s) (re-matches #"-?\d+" s))]}
+  (if (integer? s)
+    s
+    (Integer/parseInt s)))
+
+(defn duration-str->int [x]
+  (when x
+    (if-let [[_ minutes _ seconds _] (re-matches #"(\d+)(m)(\d+)(s)" x)]
+      (+ (* (parse-int minutes) 60) (parse-int seconds))
+      (when-let [[_ number unit] (re-matches #"(\d+)([ms])" x)]
+        (case unit
+          "m" (* (parse-int number) 60)
+          "s" (parse-int number))))))
+
+(defn deserialize-edn [db file]
+  (-> file
+      slurp
+      edn/read-string))
+
+(defn migrate-trainer-exercise [db data]
+  (doseq [record data]
+    (insert-row db :exercise (-> record
+                                 (update :day to-sql-date)
+                                 (update :duration duration-str->int)))))

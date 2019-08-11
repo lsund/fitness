@@ -11,7 +11,7 @@
 ;;
 ;; One type of exercise with nullable fields
 ;; Exercise (Id, Name, Duration, Distance, Lowpulse, Highpulse,
-;;           level, sets, reps, weight, step)
+;;           level, sets, reps, weight)
 ;;
 ;; The exercise record denotes a done exercise. No need for multiple tables
 ;; all data can be derived from this table.

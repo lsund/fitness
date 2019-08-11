@@ -2,6 +2,7 @@
   "Database component"
   (:require [clojure.java.jdbc :as jdbc]
             [clojure.edn :as edn]
+            [clojure.set :refer [rename-keys]]
             [clj-time.coerce :refer [to-sql-date]]
             [com.stuartsierra.component :as c]))
 
@@ -70,13 +71,14 @@
           "m" (* (parse-int number) 60)
           "s" (parse-int number))))))
 
-(defn deserialize-edn [db file]
-  (-> file
-      slurp
-      edn/read-string))
-
-(defn migrate-trainer-exercise [db data]
-  (doseq [record data]
+(defn migrate-trainer-exercise [db file]
+  (doseq [record (-> file slurp edn/read-string)]
     (insert-row db :exercise (-> record
                                  (update :day to-sql-date)
                                  (update :duration duration-str->int)))))
+
+(defn migrate-trainer-squash [db file]
+  (doseq [record (-> file slurp edn/read-string)]
+    (insert-row db :squash (-> record
+                               (update :day to-sql-date)
+                               (rename-keys {:name :opponent})))))

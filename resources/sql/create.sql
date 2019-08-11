@@ -13,18 +13,11 @@ CREATE TABLE Exercise
     weight          INT
 );
 
-CREATE TABLE SquashOpponent
+CREATE TABLE Squash
 (
     id              SERIAL PRIMARY KEY,
-    name            VARCHAR(64) UNIQUE
-);
-
-CREATE TABLE SquashResult
-(
-    id              SERIAL PRIMARY KEY,
+    opponent        VARCHAR(64) NOT NULL,
     day             DATE NOT NULL,
-    opponentid      INT NOT NULL,
     myscore         INT NOT NULL,
-    opponentScore   INT NOT NULL,
-    FOREIGN KEY     (opponentid) REFERENCES SquashOpponent (id)
+    opponentScore   INT NOT NULL
 );

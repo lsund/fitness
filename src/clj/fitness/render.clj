@@ -1,12 +1,8 @@
 (ns fitness.render
   "Namespace for rendering views"
-  (:require
-   [fitness.db :as db]
-   [taoensso.timbre :as logging]
-   [hiccup.form :refer [form-to]]
-   [hiccup.page :refer [html5 include-css include-js]]
-   [fitness.util :as util]
-   [fitness.html :as html]))
+  (:require [hiccup.form :refer [form-to]]
+            [hiccup.page :refer [html5 include-css]]
+            [fitness.html :as html]))
 
 (defn weight-table []
   [:table
@@ -41,12 +37,12 @@
 (defn exercise->str [{:keys [name reps sets weight]}]
   (str name ": " reps "/" weight "x" sets))
 
-(defn index
-  [{:keys [config session-exercises exercises]}]
+(defn workout [{:keys [config session-exercises exercises]}]
   (html5
    [:head
     [:title "Workout"]]
    [:body
+    (html/navbar)
     [:ul
      (for [x session-exercises]
        [:li (exercise->str x)])]
@@ -60,5 +56,7 @@
     (form-to [:post "/save"]
              [:input {:type :submit :value "Save training session"}])
     (apply include-css (:styles config))]))
+
+(defn history [{:keys [config]}])
 
 (def not-found (html5 "not found"))

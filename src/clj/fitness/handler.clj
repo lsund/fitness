@@ -72,9 +72,9 @@
 (defn- app-routes [{:keys [db] :as config}]
   (routes
    (GET "/" {:keys [session]}
-        (render/index {:config config
-                       :exercises (db/all db :exercise)
-                       :session-exercises (:exercises session)}))
+        (render/workout {:config config
+                         :exercises (db/all db :exercise)
+                         :session-exercises (:exercises session)}))
    (POST "/add" resp (-> resp
                          (assoc :db db)
                          wrap-add-exercise))

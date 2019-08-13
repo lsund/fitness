@@ -10,7 +10,7 @@ CREATE TABLE Exercise
     distance        INT,
     lowpulse        INT,
     highpulse       INT,
-    level           INT,
+    level           INT
 );
 
 CREATE TABLE Squash

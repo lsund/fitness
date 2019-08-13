@@ -1,11 +1,13 @@
 (ns fitness.handler
   "Route handler"
-  (:require [compojure.core :refer [GET routes]]
+  (:require [compojure.core :refer [GET POST routes]]
             [compojure.route :as route]
+            [ring.util.response :refer [redirect]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]
-            [fitness.render :as render]))
+            [fitness.render :as render]
+            [fitness.db :as db]))
 
 ;; Datbase changes:
 ;;
@@ -28,10 +30,59 @@
 ;; and no complicated skip/increment/decrement etc.
 ;;
 
+(defn today [] (java.time.LocalDateTime/now))
+
+(defn parse-int [s]
+  {:pre [(or (integer? s) (re-matches #"-?\d+" s))]}
+  (if (integer? s)
+    s
+    (Integer/parseInt s)))
+
+(defn update-keys [m ks f]
+  (reduce #(update %1 %2 f) m ks))
+
+(defn update-all [m f]
+  (reduce #(update %1 %2 f) m (keys m)))
+
+(defn empty->nil [x]
+  (when (or (not (string? x)) (not-empty x))
+    x))
+
+(defn wrap-add-exercise [{:keys [db session params]}]
+  (let [{:keys [id sets reps weight
+                duration distance lowpulse highpulse level]
+         :as exercise-params}
+        params
+
+        exercise
+        (-> exercise-params
+            (assoc :name
+                   (db/id->name db :exercise id))
+            (dissoc :id)
+            (update-keys [:reps :sets :weight] parse-int)
+            (update-all empty->nil))
+
+        new-session
+        (assoc session
+               :exercises
+               (conj (:exercises session []) exercise))]
+    (-> (redirect "/")
+        (assoc :session new-session))))
+
 (defn- app-routes [{:keys [db] :as config}]
   (routes
-   (GET "/" []
-        (render/index {} config))
+   (GET "/" {:keys [session]}
+        (render/index {:config config
+                       :exercises (db/all db :exercise)
+                       :session-exercises (:exercises session)}))
+   (POST "/add" resp (-> resp
+                         (assoc :db db)
+                         wrap-add-exercise))
+   (POST "/save" {:keys [session params]}
+         (doseq [x (:exercises session)]
+           (db/insert-row db :exercise (assoc x :day (today))))
+         (-> (redirect "/")
+             (assoc :session nil)))
    (route/resources "/")
    (route/not-found render/not-found)))
 

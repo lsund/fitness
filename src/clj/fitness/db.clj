@@ -28,6 +28,9 @@
 (defn row [db table id]
   (first (jdbc/query db [(str "SELECT * FROM " (name table) " WHERE id=?") id])))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Query
+
 (defn value [db table column id]
   (-> db
       (jdbc/query [(str "SELECT "
@@ -43,6 +46,18 @@
 
 (defn all-where [db table clause]
   (jdbc/query db [(str "SELECT * FROM " (name table) " WHERE " clause)]))
+
+(defn id->name [db table id]
+  (->> (all-where db table (str "id=" id))
+      first
+      :name))
+
+(defn distinct-names [db table]
+  (map :name
+       (jdbc/query db [(str "SELECT distinct(name) from " (name table))])))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Modify
 
 (defn update-row [db table update-map id]
   (jdbc/update! db table update-map ["id=?" id]))

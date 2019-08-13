@@ -69,6 +69,6 @@
          [:p x]
          [:ul
           (for [e es]
-            [:li (:name e)])]]))]))
+            [:li (exercise->str e)])]]))]))
 
 (def not-found (html5 "not found"))

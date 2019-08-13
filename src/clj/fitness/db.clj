@@ -1,8 +1,7 @@
 (ns fitness.db
   "Database component"
   (:require [clojure.java.jdbc :as jdbc]
-            [clojure.edn :as edn]
-            [cheshire.core :refer [generate-string]]
+            [fitness.util :as util]
             [clojure.set :refer [rename-keys]]
             [clj-time.coerce :refer [to-sql-date]]
             [com.stuartsierra.component :as c]))
@@ -72,26 +71,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Trainer -> Finances
 
-(defn parse-int [s]
-  {:pre [(or (integer? s) (re-matches #"-?\d+" s))]}
-  (if (integer? s)
-    s
-    (Integer/parseInt s)))
-
-(defn duration-str->int [x]
-  (when x
-    (if-let [[_ minutes _ seconds _] (re-matches #"(\d+)(m)(\d+)(s)" x)]
-      (+ (* (parse-int minutes) 60) (parse-int seconds))
-      (when-let [[_ number unit] (re-matches #"(\d+)([ms])" x)]
-        (case unit
-          "m" (* (parse-int number) 60)
-          "s" (parse-int number))))))
-
 (defn import-trainer-exercise [db data]
   (doseq [record data]
     (insert-row db :exercise (-> record
                                  (update :day to-sql-date)
-                                 (update :duration duration-str->int)))))
+                                 (update :duration util/duration-str->int)))))
 
 (defn import-trainer-squash [db data]
   (doseq [record data]

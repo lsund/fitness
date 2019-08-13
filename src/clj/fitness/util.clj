@@ -24,3 +24,12 @@
 
 (defn format-today []
   (format-date (clj-time/now)))
+
+(defn duration-str->int [x]
+  (when x
+    (if-let [[_ minutes _ seconds _] (re-matches #"(\d+)(m)(\d+)(s)" x)]
+      (+ (* (parse-int minutes) 60) (parse-int seconds))
+      (when-let [[_ number unit] (re-matches #"(\d+)([ms])" x)]
+        (case unit
+          "m" (* (parse-int number) 60)
+          "s" (parse-int number))))))

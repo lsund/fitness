@@ -1,6 +1,7 @@
 (ns fitness.server
   "Server Component"
   (:require [com.stuartsierra.component :as component]
+            [environ.core :refer [env]]
             [org.httpkit.server :refer [run-server]]))
 
 (defrecord Server [app port server]
@@ -20,5 +21,6 @@
         (server :timeout 10)
         (assoc component :server nil)))))
 
-(defn new-server [config]
-  (map->Server {:port (:port config)}))
+(defn new-server
+  [config]
+  (map->Server {:port (Integer. (or (env :port) (:port config)))}))

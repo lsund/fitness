@@ -13,7 +13,7 @@
 
 
 ;; Heroku DB Spec
-(def db-uri (java.net.URI. (or (env :database-url)
+(def db-uri (java.net.URI. (or (env :database)
                                "postgresql://localhost:5432/trainer")))
 
 (def user-and-password
@@ -43,6 +43,7 @@
 
 (def pg-db-val (pg-db {:name "fitness"}))
 
+;; DB Component
 (defrecord Db [db db-config]
   c/Lifecycle
   (start [component]

@@ -48,7 +48,7 @@
   c/Lifecycle
   (start [component]
     (println "[Db] Starting database")
-    (assoc component :db (pg-db db-config)))
+    (assoc component :db (make-db-spec)))
   (stop [component]
     (println "[Db] Stopping database")
     component))

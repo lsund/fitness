@@ -13,7 +13,7 @@
 
 
 ;; Heroku DB Spec
-(def db-uri (java.net.URI. (or (env :heroku-postgresql-olive-url)
+(def db-uri (java.net.URI. (or (env :database-url)
                                "postgresql://localhost:5432/trainer")))
 
 (def user-and-password

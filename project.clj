@@ -2,7 +2,7 @@
   :description "TODO"
   :url "https://github.com/lsund/fitness"
   :min-lein-version "2.8.3"
-  :dependencies [[org.clojure/clojure "1.10.0"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/tools.namespace "0.2.11"]
                  [org.clojure/java.jdbc "0.7.9"]
                  [clojure.jdbc/clojure.jdbc-c3p0 "0.3.3"]

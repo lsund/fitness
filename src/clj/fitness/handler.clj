@@ -75,6 +75,9 @@
         (render/workout {:config config
                          :exercises (db/all db :exercise)
                          :session-exercises (:exercises session)}))
+   (GET "/history" []
+        (render/history {:config config
+                         :exercises (db/all db :exercise)}))
    (POST "/add" resp (-> resp
                          (assoc :db db)
                          wrap-add-exercise))

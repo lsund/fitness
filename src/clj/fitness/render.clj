@@ -57,6 +57,18 @@
              [:input {:type :submit :value "Save training session"}])
     (apply include-css (:styles config))]))
 
-(defn history [{:keys [config]}])
+(defn history [{:keys [exercises]}]
+  (html5
+   [:head
+    [:title "History"]]
+   [:body
+    (html/navbar)
+    (let [grouped (->> exercises (sort-by :day) (group-by :day))]
+      (for [[x es] grouped]
+        [:div
+         [:p x]
+         [:ul
+          (for [e es]
+            [:li (:name e)])]]))]))
 
 (def not-found (html5 "not found"))

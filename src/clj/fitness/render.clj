@@ -63,7 +63,7 @@
     [:title "History"]]
    [:body
     (html/navbar)
-    (let [grouped (->> exercises (sort-by :day) (group-by :day))]
+    (let [grouped (->> exercises (group-by :day) sort reverse)]
       (for [[x es] grouped]
         [:div
          [:p x]

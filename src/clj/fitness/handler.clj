@@ -2,6 +2,7 @@
   "Route handler"
   (:require [compojure.core :refer [GET POST routes]]
             [compojure.route :as route]
+            [ring.middleware.json :refer [wrap-json-params]]
             [ring.util.response :refer [redirect]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
@@ -9,17 +10,6 @@
             [fitness.render :as render]
             [fitness.db :as db]))
 
-;; Datbase changes:
-;;
-;; One type of exercise with nullable fields
-;; Exercise (Id, Name, Duration, Distance, Lowpulse, Highpulse,
-;;           level, sets, reps, weight)
-;;
-;; The exercise record denotes a done exercise. No need for multiple tables
-;; all data can be derived from this table.
-;;
-;; Still need table for SquashMatch and SquashOpponent
-;;
 ;; Instead of trying to monitor exact growth, Show the weight max and
 ;; average reps + weight and simply let the user enter the data
 ;;
@@ -86,6 +76,13 @@
            (db/insert-row db :exercise (assoc x :day (today))))
          (-> (redirect "/")
              (assoc :session nil)))
+   ;; Imports
+   (POST "/import-trainer-exercise" req
+         (db/import-trainer-exercise db (get-in req [:params :data]))
+         "Exercises imported.")
+   (POST "/import-trainer-squash" req
+         (db/import-trainer-squash db (get-in req [:params :data]))
+         "Squash records imported.")
    (route/resources "/")
    (route/not-found render/not-found)))
 
@@ -93,5 +90,6 @@
   (-> (app-routes config)
       (wrap-keyword-params)
       (wrap-params)
+      (wrap-json-params)
       (wrap-defaults
        (-> site-defaults (assoc-in [:security :anti-forgery] false)))))

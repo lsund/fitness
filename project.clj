@@ -6,6 +6,8 @@
                  [org.clojure/tools.namespace "0.2.11"]
                  [org.clojure/java.jdbc "0.7.9"]
                  [org.postgresql/postgresql "42.2.5"]
+                 [cheshire "5.9.0"]
+                 [ring/ring-json "0.5.0"]
                  [clj-time "0.15.1"]
                  [http-kit "2.3.0"]
                  [ring/ring-defaults "0.3.2"]

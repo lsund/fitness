@@ -13,8 +13,8 @@
 
 
 ;; Heroku DB Spec
-(def db-uri (java.net.URI. (or (env :database)
-                               "postgresql://localhost:5432/trainer")))
+(def db-uri (java.net.URI. (or (env :database-url)
+                               "postgresql://localhost:5432/fitness")))
 
 (def user-and-password
   (if (nil? (.getUserInfo db-uri))
@@ -39,7 +39,7 @@
 
 (def pg-uri
   {:dbtype "postgresql"
-   :connection-uri "postgresql://localhost:5432/trainer"})
+   :connection-uri "postgresql://localhost:5432/fitness"})
 
 (def pg-db-val (pg-db {:name "fitness"}))
 

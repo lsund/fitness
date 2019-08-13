@@ -2,14 +2,44 @@
   "Database component"
   (:require [clojure.java.jdbc :as jdbc]
             [fitness.util :as util]
+            [jdbc.pool.c3p0 :as pool]
+            [environ.core :refer [env]]
+            [clojure.string :as string]
             [clojure.set :refer [rename-keys]]
             [clj-time.coerce :refer [to-sql-date]]
             [com.stuartsierra.component :as c]))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; DB SPEC
 
+
+;; Heroku DB Spec
+(def db-uri (java.net.URI. (or (env :heroku-postgresql-olive-url)
+                               "postgresql://localhost:5432/trainer")))
+
+(def user-and-password
+  (if (nil? (.getUserInfo db-uri))
+    nil
+    (string/split (.getUserInfo db-uri) #":")))
+
+(defn make-db-spec []
+  (pool/make-datasource-spec
+   {:classname "org.postgresql.Driver"
+    :subprotocol "postgresql"
+    :user (get user-and-password 0)
+    :password (get user-and-password 1)
+    :subname (if (= -1 (.getPort db-uri))
+               (format "//%s%s" (.getHost db-uri) (.getPath db-uri))
+               (format "//%s:%s%s" (.getHost db-uri) (.getPort db-uri) (.getPath db-uri)))}))
+
+;; Local DB Spec
 (defn pg-db [config]
   {:dbtype "postgresql"
    :dbname (:name config)
    :user "postgres"})
+
+(def pg-uri
+  {:dbtype "postgresql"
+   :connection-uri "postgresql://localhost:5432/trainer"})
 
 (def pg-db-val (pg-db {:name "fitness"}))
 
@@ -49,8 +79,8 @@
 
 (defn id->name [db table id]
   (->> (all-where db table (str "id=" id))
-      first
-      :name))
+       first
+       :name))
 
 (defn distinct-names [db table]
   (map :name

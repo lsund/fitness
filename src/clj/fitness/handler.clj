@@ -1,6 +1,7 @@
 (ns fitness.handler
   "Route handler"
   (:require [compojure.core :refer [GET POST routes]]
+            [fitness.util :as util]
             [compojure.route :as route]
             [ring.middleware.json :refer [wrap-json-params]]
             [ring.util.response :refer [redirect]]
@@ -38,24 +39,37 @@
   (when (or (not (string? x)) (not-empty x))
     x))
 
-(defn wrap-add-exercise [{:keys [db session params]}]
-  (let [{:keys [id sets reps weight
-                duration distance lowpulse highpulse level]
-         :as exercise-params}
+(defn wrap-session-add-exercise [{:keys [db session params]}]
+  (let [{:keys [new-name eid]}
         params
 
+        new-exercise?
+        (= (util/parse-int eid) -1)
+
+        new-exercise-count
+        (if new-exercise?
+          (inc (or (:new-exercise-count session) 0))
+          (:new-exercise-count session))
+
+        [name eid]
+        (if new-exercise?
+          [new-name (db/new-exerciseid db new-exercise-count)]
+          [(db/eid->name db (util/parse-int eid)) eid])
+
         exercise
-        (-> exercise-params
-            (assoc :name
-                   (db/id->name db :exercise id))
-            (dissoc :id)
-            (update-keys [:reps :sets :weight] parse-int)
+        (-> params
+            (dissoc :eid :new-name)
+            (assoc :name name)
+            (assoc :exerciseid eid)
+            (update-keys [:exerciseid :reps :sets :weight] parse-int)
             (update-all empty->nil))
 
         new-session
         (assoc session
                :exercises
-               (conj (:exercises session []) exercise))]
+               (conj (:exercises session []) exercise)
+               :new-exercise-count
+               new-exercise-count)]
     (-> (redirect "/")
         (assoc :session new-session))))
 
@@ -64,13 +78,14 @@
    (GET "/" {:keys [session]}
         (render/workout {:config config
                          :exercises (db/all db :exercise)
+                         :indexed-exercises (db/indexed-exercises db)
                          :session-exercises (:exercises session)}))
    (GET "/history" []
         (render/history {:config config
                          :exercises (db/all db :exercise)}))
    (POST "/add" resp (-> resp
                          (assoc :db db)
-                         wrap-add-exercise))
+                         wrap-session-add-exercise))
    (POST "/save" {:keys [session params]}
          (doseq [x (:exercises session)]
            (db/insert-row db :exercise (assoc x :day (today))))

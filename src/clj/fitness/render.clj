@@ -37,7 +37,7 @@
 (defn exercise->str [{:keys [name reps sets weight]}]
   (str name ": " reps "/" weight "x" sets))
 
-(defn workout [{:keys [config session-exercises exercises]}]
+(defn workout [{:keys [config session-exercises indexed-exercises exercises]}]
   (html5
    [:head
     [:title "Workout"]]
@@ -47,9 +47,12 @@
      (for [x session-exercises]
        [:li (exercise->str x)])]
     (form-to [:post "/add"]
-             [:select {:name "id"}
-              (for [x exercises]
-                [:option {:value (:id x)} (:name x)])]
+             [:select {:name "eid"}
+              (for [x (conj indexed-exercises {:exerciseid -1 :name "New"})]
+                [:option {:value (:exerciseid x)} (:name x)])]
+             [:input {:type :text
+                      :name "new-name"
+                      :placeholder "New name"}]
              (weight-table)
              (cardio-table)
              [:input {:type :submit :value "Add"}])

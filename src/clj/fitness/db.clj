@@ -8,9 +8,9 @@
             [clojure.set :refer [rename-keys]]
             [clj-time.coerce :refer [to-sql-date]]
             [com.stuartsierra.component :as c]))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; DB SPEC
-
 
 ;; Heroku DB Spec
 (def db-uri (java.net.URI. (or (env :database-url)
@@ -83,9 +83,25 @@
        first
        :name))
 
-(defn distinct-names [db table]
-  (map :name
-       (jdbc/query db [(str "SELECT distinct(name) from " (name table))])))
+(defn distinct-by-column [db column table]
+  (map column (jdbc/query db [(str "SELECT distinct(" (name column) ")"
+                                   " FROM " (name table))])))
+
+(defn eid->name [db eid]
+  (-> (jdbc/query db ["SELECT name from exercise where exerciseid = ?" eid])
+      first
+      :name))
+
+(defn indexed-exercises [db]
+  (jdbc/query db ["SELECT distinct(name), exerciseid
+                   FROM exercise
+                   ORDER BY name"]))
+
+(defn new-exerciseid [db n]
+  (-> (jdbc/query db ["SELECT max(exerciseid) from exercise"])
+      first
+      :max
+      (+ n)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modify
@@ -100,7 +116,9 @@
   (jdbc/insert! db table insert-map))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;  Trainer -> Finances
+;; Migrations
+
+;; 2019-08-13 Trainer -> Finances
 
 (defn import-trainer-exercise [db data]
   (doseq [record data]
@@ -113,3 +131,10 @@
     (insert-row db :squash (-> record
                                (update :day to-sql-date)
                                (rename-keys {:name :opponent})))))
+
+;; 2019-08-14 Add exercise id
+
+(defn update-indices [db]
+  (doseq [[ename i] (map vector (distinct-by-column db :name :exercise) (range))]
+    (doseq [e (all-where db :exercise (format "name = '%s'" ename))]
+      (update-row db :exercise {:exerciseid i} (:id e)))))

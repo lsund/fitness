@@ -1,6 +1,7 @@
 CREATE TABLE Exercise
 (
     id              SERIAL PRIMARY KEY,
+    exerciseid      INT,
     name            VARCHAR(64) NOT NULL,
     day             DATE NOT NULL,
     sets            INT,

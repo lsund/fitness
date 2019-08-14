@@ -21,24 +21,6 @@
 ;; and no complicated skip/increment/decrement etc.
 ;;
 
-(defn today [] (java.time.LocalDateTime/now))
-
-(defn parse-int [s]
-  {:pre [(or (integer? s) (re-matches #"-?\d+" s))]}
-  (if (integer? s)
-    s
-    (Integer/parseInt s)))
-
-(defn update-keys [m ks f]
-  (reduce #(update %1 %2 f) m ks))
-
-(defn update-all [m f]
-  (reduce #(update %1 %2 f) m (keys m)))
-
-(defn empty->nil [x]
-  (when (or (not (string? x)) (not-empty x))
-    x))
-
 (defn wrap-session-add-exercise [{:keys [db session params]}]
   (let [{:keys [new-name eid]}
         params
@@ -61,8 +43,8 @@
             (dissoc :eid :new-name)
             (assoc :name name)
             (assoc :exerciseid eid)
-            (update-keys [:exerciseid :reps :sets :weight] parse-int)
-            (update-all empty->nil))
+            (util/update-keys [:exerciseid :reps :sets :weight] util/parse-int)
+            (util/update-all util/empty->nil))
 
         new-session
         (assoc session
@@ -88,7 +70,7 @@
                          wrap-session-add-exercise))
    (POST "/save" {:keys [session params]}
          (doseq [x (:exercises session)]
-           (db/insert-row db :exercise (assoc x :day (today))))
+           (db/insert-row db :exercise (assoc x :day (util/today))))
          (-> (redirect "/")
              (assoc :session nil)))
    ;; Imports

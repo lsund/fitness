@@ -33,3 +33,15 @@
         (case unit
           "m" (* (parse-int number) 60)
           "s" (parse-int number))))))
+
+(defn update-keys [m ks f]
+  (reduce #(update %1 %2 f) m ks))
+
+(defn update-all [m f]
+  (reduce #(update %1 %2 f) m (keys m)))
+
+(defn empty->nil [x]
+  (when (or (not (string? x)) (not-empty x))
+    x))
+
+(defn today [] (java.time.LocalDateTime/now))

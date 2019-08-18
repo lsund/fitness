@@ -36,6 +36,14 @@
           "m" (* (parse-int number) 60)
           "s" (parse-int number))))))
 
+(defn int->duration-str [x]
+  (when x
+    (let [q (quot x 60)
+          r (rem x 60)]
+      (if (zero? r)
+        (str q "m")
+        (str q "m" r "s")))))
+
 (defn update-keys [m ks f]
   (reduce #(update %1 %2 f) m ks))
 

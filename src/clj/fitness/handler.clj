@@ -43,10 +43,10 @@
             (dissoc :eid :new-name)
             (assoc :name name)
             (assoc :exerciseid eid)
+            (util/update-all util/empty->nil)
             (util/update-keys [:exerciseid :reps :sets :weight :level :distance]
                               util/parse-int)
-            (update :duration util/duration-str->int)
-            (util/update-all util/empty->nil))
+            (update :duration util/duration-str->int))
 
         new-session
         (assoc session

@@ -2,6 +2,7 @@
   "Namespace for rendering views"
   (:require [hiccup.form :refer [form-to]]
             [hiccup.page :refer [html5 include-css]]
+            [fitness.util :as util]
             [fitness.html :as html]))
 
 (defn weight-table []
@@ -34,8 +35,15 @@
      [:td [:input {:name "highpulse" :type :number :min "0"}]]
      [:td [:input {:name "level" :type :number :min "0"}]]]]])
 
-(defn exercise->str [{:keys [name reps sets weight]}]
-  (str name ": " reps "/" weight "x" sets))
+(defn exercise->str [{:keys [name reps weight sets duration distance level]}]
+  (cond
+    (and reps weight sets)
+    (str name ": " reps "/" weight "x" sets)
+
+    (and duration distance level)
+    (str name ": "
+         "level " level ", "
+         distance "m, " (util/int->duration-str duration))))
 
 (defn workout [{:keys [config session-exercises indexed-exercises]}]
   (html5

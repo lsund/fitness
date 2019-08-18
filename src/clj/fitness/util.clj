@@ -6,11 +6,13 @@
   (:import [java.time LocalDateTime LocalDate]
            [java.sql Date Timestamp]))
 
+(defn today [] (java.time.LocalDateTime/now))
+
 (defn stringify [k] (-> k name string/capitalize))
 
 (defn parse-int [s]
-  {:pre [(or (integer? s) (re-matches #"-?\d+" s))]}
-  (if (integer? s)
+  {:pre [(or (not (string? s)) (re-matches #"-?\d+" s))]}
+  (if (not (string? s))
     s
     (Integer/parseInt s)))
 
@@ -43,5 +45,3 @@
 (defn empty->nil [x]
   (when (or (not (string? x)) (not-empty x))
     x))
-
-(defn today [] (java.time.LocalDateTime/now))

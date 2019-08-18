@@ -8,9 +8,9 @@
   [:table
    [:thead
     [:tr
-     [:th "sets"]
-     [:th "reps"]
-     [:th "weight"]]]
+     [:th "sets (#)"]
+     [:th "reps (#)"]
+     [:th "weight (kg)"]]]
    [:tbody
     [:tr
      [:td [:input {:name "sets" :type :number :value 3 :min "0"}]]
@@ -21,14 +21,14 @@
   [:table
    [:thead
     [:tr
-     [:th "duration"]
-     [:th "distance"]
-     [:th "highpulse"]
-     [:th "lowpulse"]
-     [:th "level"]]]
+     [:th "duration (time)"]
+     [:th "distance (m)"]
+     [:th "highpulse (bpm)"]
+     [:th "lowpulse (bpm)"]
+     [:th "level (#)"]]]
    [:tbody
     [:tr
-     [:td [:input {:name "duration" :type :number :min "0"}]]
+     [:td [:input {:name "duration" :type :text}]]
      [:td [:input {:name "distance" :type :number :min "0"}]]
      [:td [:input {:name "lowpulse" :type :number :min "0"}]]
      [:td [:input {:name "highpulse" :type :number :min "0"}]]
@@ -37,7 +37,7 @@
 (defn exercise->str [{:keys [name reps sets weight]}]
   (str name ": " reps "/" weight "x" sets))
 
-(defn workout [{:keys [config session-exercises indexed-exercises exercises]}]
+(defn workout [{:keys [config session-exercises indexed-exercises]}]
   (html5
    [:head
     [:title "Workout"]]

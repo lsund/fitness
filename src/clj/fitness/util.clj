@@ -53,3 +53,19 @@
 (defn empty->nil [x]
   (when (or (not (string? x)) (not-empty x))
     x))
+
+(def ^{:private true} date-string "yyyy-MM-dd")
+
+(defn string->localdate [s]
+  (java.time.LocalDate/parse s (java.time.format.DateTimeFormatter/ofPattern date-string)))
+
+(defn ->localdate
+  [date]
+  {:pre [(not (nil? date))]}
+  (condp = (type date)
+    java.sql.Timestamp (.. date toLocalDateTime toLocalDate)
+    java.sql.Date (.toLocalDate date)
+    java.time.LocalDate date
+    java.time.LocalDateTime date
+    java.lang.String (string->localdate date)
+    (throw (Exception. (str "Unknown date type: " (type date))))))

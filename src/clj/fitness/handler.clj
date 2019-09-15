@@ -67,6 +67,29 @@
    (GET "/history" []
         (render/history {:config config
                          :exercises (db/all db :exercise)}))
+   (GET "/squash" []
+        (render/squash {:config config
+                        :matches (db/all db :squash)
+                        :opponents (db/squash-opponents db)}))
+   (POST "/squash/add" [opponent myscore opponentscore new-opponent day]
+         (db/insert-row db
+                        :squash
+                        {:myscore
+                         (util/parse-int myscore)
+
+                         :opponentscore
+                         (util/parse-int opponentscore)
+
+                         :day
+                         (if (empty? day)
+                           (util/today)
+                           (util/->localdate day))
+
+                         :opponent
+                         (if (= opponent "New")
+                           new-opponent
+                           opponent)})
+         (redirect "/squash"))
    (POST "/add" resp (-> resp
                          (assoc :db db)
                          wrap-session-add-exercise))

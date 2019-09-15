@@ -97,6 +97,11 @@
                    FROM exercise
                    ORDER BY name"]))
 
+(defn squash-opponents [db]
+  (jdbc/query db ["SELECT distinct(opponent)
+                   FROM squash
+                   ORDER BY opponent"]))
+
 (defn new-exerciseid [db n]
   (-> (jdbc/query db ["SELECT max(exerciseid) from exercise"])
       first

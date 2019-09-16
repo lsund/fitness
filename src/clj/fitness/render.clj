@@ -113,7 +113,7 @@
              [:input {:type :submit :value "Add"}]
              (squash-table))
     [:ul
-     (for [match (sort-by :day matches)]
+     (for [match (reverse (sort-by :day matches))]
        [:li (match->str match)])]]))
 
 (def not-found (html5 "not found"))

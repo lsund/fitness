@@ -53,8 +53,7 @@
 (defrecord Db [db db-config]
   c/Lifecycle
   (start [component]
-    (println "[Db] Starting database")
-    (println "DB SPEC: " (make-db-spec db-config))
+    (println "[Db] Starting database with spec: " (make-db-spec db-config))
     (assoc component :db (make-db-spec db-config)))
   (stop [component]
     (println "[Db] Stopping database")

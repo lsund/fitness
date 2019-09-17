@@ -6,5 +6,7 @@
             [fitness.core :refer [new-system]]))
 
 (defn -main [& args]
-  (c/start (new-system (config/from-file)))
+  (c/start (new-system (assoc-in (config/from-file)
+                                 [:db :environment]
+                                 (keyword (first args)))))
   (println "Server up and running"))

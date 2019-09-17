@@ -1,2 +1,2 @@
-web: java $JVM_OPTS -cp target/fitness-standalone.jar heroku clojure.main -m
+web: java $JVM_OPTS -cp target/fitness-standalone.jar clojure.main -m
 fitness.main heroku

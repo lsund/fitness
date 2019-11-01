@@ -97,11 +97,11 @@
                    FROM exercise
                    ORDER BY name"]))
 
-(defn new-exerciseid [db n]
+(defn new-exerciseid [db]
   (-> (jdbc/query db ["SELECT max(exerciseid) from exercise"])
       first
       :max
-      (+ n)))
+      (+ 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modify

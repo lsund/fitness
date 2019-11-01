@@ -45,15 +45,12 @@
          "level " level ", "
          distance "m, " (util/int->duration-str duration))))
 
-(defn workout [{:keys [config session-exercises indexed-exercises]}]
+(defn workout [{:keys [config  indexed-exercises]}]
   (html5
    [:head
     [:title "Workout"]]
    [:body
     (html/navbar)
-    [:ul
-     (for [x session-exercises]
-       [:li (exercise->str x)])]
     (form-to [:post "/add"]
              [:select {:name "eid"}
               (for [x (conj indexed-exercises {:exerciseid -1 :name "New"})]
@@ -63,9 +60,8 @@
                       :placeholder "New name"}]
              (weight-table)
              (cardio-table)
-             [:input {:type :submit :value "Add"}])
-    (form-to [:post "/save"]
-             [:input {:type :submit :value "Save training session"}])
+             [:div
+              [:input {:type :submit :value "Add"}]])
     (apply include-css (:styles config))]))
 
 (defn history [{:keys [exercises]}]

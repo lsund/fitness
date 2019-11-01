@@ -21,21 +21,16 @@
 ;; and no complicated skip/increment/decrement etc.
 ;;
 
-(defn wrap-session-add-exercise [{:keys [db session params]}]
+(defn make-exercise [db params]
   (let [{:keys [new-name eid]}
         params
 
         new-exercise?
         (= (util/parse-int eid) -1)
 
-        new-exercise-count
-        (if new-exercise?
-          (inc (or (:new-exercise-count session) 0))
-          (:new-exercise-count session))
-
         [name eid]
         (if new-exercise?
-          [new-name (db/new-exerciseid db new-exercise-count)]
+          [new-name (db/new-exerciseid db)]
           [(db/eid->name db (util/parse-int eid)) eid])
 
         exercise
@@ -46,35 +41,23 @@
             (util/update-all util/empty->nil)
             (util/update-keys [:exerciseid :reps :sets :weight :level :distance]
                               util/parse-int)
-            (update :duration util/duration-str->int))
-
-        new-session
-        (assoc session
-               :exercises
-               (conj (:exercises session []) exercise)
-               :new-exercise-count
-               new-exercise-count)]
-    (-> (redirect "/")
-        (assoc :session new-session))))
+            (update :duration util/duration-str->int))]
+    exercise))
 
 (defn- app-routes [{:keys [db] :as config}]
   (routes
-   (GET "/" {:keys [session]}
+   (GET "/" []
         (render/workout {:config config
                          :exercises (db/all db :exercise)
-                         :indexed-exercises (db/indexed-exercises db)
-                         :session-exercises (:exercises session)}))
+                         :indexed-exercises (db/indexed-exercises db)}))
    (GET "/history" []
         (render/history {:config config
                          :exercises (db/all db :exercise)}))
-   (POST "/add" resp (-> resp
-                         (assoc :db db)
-                         wrap-session-add-exercise))
-   (POST "/save" {:keys [session params]}
-         (doseq [x (:exercises session)]
-           (db/insert-row db :exercise (assoc x :day (util/today))))
-         (-> (redirect "/")
-             (assoc :session nil)))
+   (POST "/add" {:keys [params]}
+         (db/insert-row db
+                        :exercise
+                        (assoc (make-exercise db params) :day (util/today)))
+         (redirect "/"))
    ;; Imports
    (POST "/import-trainer-exercise" req
          (db/import-trainer-exercise db (get-in req [:params :data]))

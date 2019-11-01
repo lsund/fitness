@@ -21,7 +21,7 @@
     nil
     (string/split (.getUserInfo db-uri) #":")))
 
-(defn make-db-spec []
+(defn make-heroku-spec []
   (pool/make-datasource-spec
    {:classname "org.postgresql.Driver"
     :subprotocol "postgresql"
@@ -31,24 +31,30 @@
                (format "//%s%s" (.getHost db-uri) (.getPath db-uri))
                (format "//%s:%s%s" (.getHost db-uri) (.getPort db-uri) (.getPath db-uri)))}))
 
-;; Local DB Spec
-(defn pg-db [config]
+(def docker-db-spec
   {:dbtype "postgresql"
-   :dbname (:name config)
+   :dbname "fitness"
+   :user "lsund"
+   :host "db"
+   :password "admin"})
+
+(def local-db-spec
+  {:dbtype "postgresql"
+   :dbname "fitness"
    :user "postgres"})
 
-(def pg-uri
-  {:dbtype "postgresql"
-   :connection-uri "postgresql://localhost:5432/fitness"})
-
-(def pg-db-val (pg-db {:name "fitness"}))
+(defn make-db-spec [{:keys [environment]}]
+  (case environment
+    :heroku (make-heroku-spec)
+    :docker docker-db-spec
+    local-db-spec))
 
 ;; DB Component
 (defrecord Db [db db-config]
   c/Lifecycle
   (start [component]
-    (println "[Db] Starting database")
-    (assoc component :db (make-db-spec)))
+    (println "[Db] Starting database with spec: " (make-db-spec db-config))
+    (assoc component :db (make-db-spec db-config)))
   (stop [component]
     (println "[Db] Stopping database")
     component))
@@ -97,7 +103,12 @@
                    FROM exercise
                    ORDER BY name"]))
 
-(defn new-exerciseid [db]
+(defn squash-opponents [db]
+  (jdbc/query db ["SELECT distinct(opponent)
+                   FROM squash
+                   ORDER BY opponent"]))
+
+(defn new-exerciseid [db n]
   (-> (jdbc/query db ["SELECT max(exerciseid) from exercise"])
       first
       :max

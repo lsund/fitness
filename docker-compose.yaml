@@ -1,0 +1,23 @@
+version: "3"
+services:
+  web:
+    restart: always
+    build:
+        context: .
+        dockerfile: ./Dockerfile.web
+    ports:
+        - 3011:3011
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      - POSTGRES_USER=lsund
+      - POSTGRES_PASSWORD=admin
+  db:
+    restart: always
+    build:
+        context: .
+        dockerfile: ./Dockerfile.db
+    ports:
+        - 5432:5432

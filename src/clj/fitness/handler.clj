@@ -58,6 +58,29 @@
                         :exercise
                         (assoc (make-exercise db params) :day (util/today)))
          (redirect "/"))
+   (GET "/squash" []
+        (render/squash {:config config
+                        :matches (db/all db :squash)
+                        :opponents (db/squash-opponents db)}))
+   (POST "/squash/add" [opponent myscore opponentscore new-opponent day]
+         (db/insert-row db
+                        :squash
+                        {:myscore
+                         (util/parse-int myscore)
+
+                         :opponentscore
+                         (util/parse-int opponentscore)
+
+                         :day
+                         (if (empty? day)
+                           (util/today)
+                           (util/->localdate day))
+
+                         :opponent
+                         (if (= opponent "New")
+                           new-opponent
+                           opponent)})
+         (redirect "/squash"))
    ;; Imports
    (POST "/import-trainer-exercise" req
          (db/import-trainer-exercise db (get-in req [:params :data]))

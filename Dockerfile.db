@@ -1,0 +1,4 @@
+FROM postgres:11.5
+MAINTAINER lud.sund@gmail.com
+COPY resources/sql/init.sql /docker-entrypoint-initdb.d/
+EXPOSE 5432

@@ -7,5 +7,4 @@ RUN lein deps
 COPY . /usr/src/app
 RUN lein uberjar
 EXPOSE 3011
-CMD ["java", "-cp", "target/fitness-standalone.jar", "clojure.main", "-m",
-"fitness.main", "docker"]
+CMD ["java", "-cp", "target/fitness-standalone.jar", "clojure.main", "-m", "fitness.main", "docker"]

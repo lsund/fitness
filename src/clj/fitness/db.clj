@@ -108,11 +108,12 @@
                    FROM squash
                    ORDER BY opponent"]))
 
-(defn new-exerciseid [db n]
-  (-> (jdbc/query db ["SELECT max(exerciseid) from exercise"])
-      first
-      :max
-      (+ 1)))
+(defn new-exerciseid [db]
+  (if-let [id (-> (jdbc/query db ["SELECT max(exerciseid) from exercise"])
+                  first
+                  :max)]
+    (inc id)
+    1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modify

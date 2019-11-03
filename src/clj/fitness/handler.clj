@@ -50,9 +50,6 @@
         (render/workout {:config config
                          :exercises (db/all db :exercise)
                          :indexed-exercises (db/indexed-exercises db)}))
-   (GET "/history" []
-        (render/history {:config config
-                         :exercises (db/all db :exercise)}))
    (POST "/add" {:keys [params]}
          (db/insert-row db
                         :exercise

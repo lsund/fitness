@@ -3,6 +3,6 @@
     position: absolute;
 }
 
-body * {
-    margin-top: 25px;
+body > * {
+    margin-top: 50px;
 }

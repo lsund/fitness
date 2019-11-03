@@ -5,36 +5,6 @@
             [fitness.util :as util]
             [fitness.html :as html]))
 
-(defn weight-table []
-  [:table
-   [:thead
-    [:tr
-     [:th "sets (#)"]
-     [:th "reps (#)"]
-     [:th "weight (kg)"]]]
-   [:tbody
-    [:tr
-     [:td [:input {:name "sets" :type :number :value 3 :min "0"}]]
-     [:td [:input {:name "reps" :type :number :min "0"}]]
-     [:td [:input {:name "weight" :type :number :min "0"}]]]]])
-
-(defn cardio-table []
-  [:table
-   [:thead
-    [:tr
-     [:th "duration (time)"]
-     [:th "distance (m)"]
-     [:th "highpulse (bpm)"]
-     [:th "lowpulse (bpm)"]
-     [:th "level (#)"]]]
-   [:tbody
-    [:tr
-     [:td [:input {:name "duration" :type :text}]]
-     [:td [:input {:name "distance" :type :number :min "0"}]]
-     [:td [:input {:name "lowpulse" :type :number :min "0"}]]
-     [:td [:input {:name "highpulse" :type :number :min "0"}]]
-     [:td [:input {:name "level" :type :number :min "0"}]]]]])
-
 (defn squash-table []
   [:table
    [:thead
@@ -56,38 +26,58 @@
          "level " level ", "
          distance "m, " (util/int->duration-str duration))))
 
-(defn workout [{:keys [config  indexed-exercises]}]
+(defn textfield [label input]
+  [:div.mui-textfield
+   [:label label]
+   input])
+
+(defn workout [{:keys [config indexed-exercises exercises]}]
   (html5
    [:head
     [:title "Workout"]]
    [:body
     (html/navbar)
-    (form-to [:post "/add"]
-             [:select {:name "eid"}
-              (for [x (conj indexed-exercises {:exerciseid -1 :name "New"})]
-                [:option {:value (:exerciseid x)} (:name x)])]
-             [:input {:type :text
-                      :name "new-name"
-                      :placeholder "New name"}]
-             (weight-table)
-             (cardio-table)
+    (form-to {:class "mui-form"}
+             [:post "/add"]
+             [:div.mui-select
+              [:select {:name "eid"}
+               (for [x (conj indexed-exercises {:exerciseid -1 :name "New"})]
+                 [:option {:value (:exerciseid x)} (:name x)])]]
+             [:h3 "Add weightlift"]
+             (textfield nil [:input {:type :text
+                                     :name "new-name"
+                                     :placeholder "New name"}])
+             (textfield "Sets"
+                        [:input.mui-number {:name "sets"
+                                            :type :number
+                                            :value 3
+                                            :min "0"}])
+             (textfield "Reps"
+                        [:input {:name "reps" :type :number :min "0"}])
+             (textfield "Weight"
+                        [:input {:name "weight" :type :number :min "0"}])
+             [:h3 "Add Cardio"]
+             (textfield "Duration"
+                        [:input {:name "duration" :type :text}])
+             (textfield "Distance"
+                        [:input {:name "distance" :type :number :min "0"}])
+             (textfield "Lowpulse"
+                        [:td [:input {:name "lowpulse" :type :number :min "0"}]])
+             (textfield "Highpulse"
+                        [:input {:name "highpulse" :type :number :min "0"}])
+             (textfield "Level"
+                        [:input {:name "level" :type :number :min "0"}])
              [:div
-              [:input {:type :submit :value "Add"}]])
+              [:input.mui-btn.mui-btn--raised {:type :submit :value "Add"}]])
+    [:div
+     (let [grouped (->> exercises (group-by :day) sort reverse)]
+       (for [[x es] grouped]
+         [:div
+          [:p x]
+          [:ul
+           (for [e es]
+             [:li (exercise->str e)])]]))]
     (apply include-css (:styles config))]))
-
-(defn history [{:keys [exercises]}]
-  (html5
-   [:head
-    [:title "History"]]
-   [:body
-    (html/navbar)
-    (let [grouped (->> exercises (group-by :day) sort reverse)]
-      (for [[x es] grouped]
-        [:div
-         [:p x]
-         [:ul
-          (for [e es]
-            [:li (exercise->str e)])]]))]))
 
 (defn match->str [{:keys [day opponent myscore opponentscore]}]
   (str day ": " opponent " " myscore "-" opponentscore))
@@ -95,19 +85,20 @@
 (defn squash [{:keys [opponents matches]}]
   (html5
    [:head
-    [:title "History"]]
+    [:title "Squash Results"]]
    [:body
     (html/navbar)
-    (form-to [:post "/squash/add"]
-             [:select {:name "opponent"}
-              (for [x (conj opponents {:opponent "New"})]
-                [:option {:value (:opponent x)} (:opponent x)])]
-             [:input {:type :text
-                      :name "new-opponent"
-                      :placeholder "New opponent"}]
-             [:input {:type :date :name "day"}]
-             [:input {:type :submit :value "Add"}]
-             (squash-table))
+    (form-to
+     [:post "/squash/add"]
+     [:select {:name "opponent"}
+      (for [x (conj opponents {:opponent "New"})]
+        [:option {:value (:opponent x)} (:opponent x)])]
+     [:input {:type :text
+              :name "new-opponent"
+              :placeholder "New opponent"}]
+     [:input {:type :date :name "day"}]
+     [:input {:type :submit :value "Add"}]
+     (squash-table))
     [:ul
      (for [match (reverse (sort-by :day matches))]
        [:li (match->str match)])]]))

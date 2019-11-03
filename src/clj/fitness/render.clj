@@ -46,7 +46,7 @@
                [:input {:type :checkbox
                         :name "new-check"
                         :id "newCheck"}]
-               "New"]]
+               "Register new exercise"]]
              [:div.mui-select
               {:id "selectField"}
               [:select {:name "eid"}
@@ -54,9 +54,9 @@
                  [:option {:value (:exerciseid x)} (:name x)])]]
              [:div.mui-textfield
               {:id "newField"}
-              [:input {:name "new-name"
-                       :type :text
-                       :placeholder "New fooname"}]]
+              [:input#newFieldText {:name "new-name"
+                                    :type :text
+                                    :placeholder "New fooname"}]]
              (textfield "Sets"
                         [:input.mui-number {:name "sets"
                                             :type :number

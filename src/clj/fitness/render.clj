@@ -1,7 +1,7 @@
 (ns fitness.render
   "Namespace for rendering views"
   (:require [hiccup.form :refer [form-to]]
-            [hiccup.page :refer [html5 include-css]]
+            [hiccup.page :refer [html5 include-css include-js]]
             [fitness.util :as util]
             [fitness.html :as html]))
 
@@ -39,14 +39,24 @@
     (html/navbar)
     (form-to {:class "mui-form"}
              [:post "/add"]
-             [:div.mui-select
-              [:select {:name "eid"}
-               (for [x (conj indexed-exercises {:exerciseid -1 :name "New"})]
-                 [:option {:value (:exerciseid x)} (:name x)])]]
              [:h3 "Add weightlift"]
-             (textfield nil [:input {:type :text
-                                     :name "new-name"
-                                     :placeholder "New name"}])
+             [:div.mui-radio
+              [:label]
+              [:div.mui-radio
+               [:input {:type :checkbox
+                        :name "new-check"
+                        :id "newCheck"}]
+               "New"]]
+             [:div.mui-select
+              {:id "selectField"}
+              [:select {:name "eid"}
+               (for [x indexed-exercises]
+                 [:option {:value (:exerciseid x)} (:name x)])]]
+             [:div.mui-textfield
+              {:id "newField"}
+              [:input {:name "new-name"
+                       :type :text
+                       :placeholder "New fooname"}]]
              (textfield "Sets"
                         [:input.mui-number {:name "sets"
                                             :type :number
@@ -77,7 +87,8 @@
           [:ul
            (for [e es]
              [:li (exercise->str e)])]]))]
-    (apply include-css (:styles config))]))
+    (apply include-css (:styles config))
+    (apply include-js (:javascripts config))]))
 
 (defn match->str [{:keys [day opponent myscore opponentscore]}]
   (str day ": " opponent " " myscore "-" opponentscore))

@@ -26,7 +26,7 @@
         params
 
         new-exercise?
-        (= (util/parse-int eid) -1)
+        (not-empty new-name)
 
         [name eid]
         (if new-exercise?
@@ -35,7 +35,7 @@
 
         exercise
         (-> params
-            (dissoc :eid :new-name)
+            (dissoc :eid :new-name :new-check)
             (assoc :name name)
             (assoc :exerciseid eid)
             (util/update-all util/empty->nil)

@@ -31,7 +31,10 @@
    [:label label]
    input])
 
-(defn workout [{:keys [config indexed-exercises exercises]}]
+(defn workout [{:keys [config
+                       indexed-exercises
+                       exercises
+                       oldest-untouched-exercises]}]
   (html5
    [:head
     [:title "Workout"]]
@@ -79,6 +82,11 @@
                         [:input {:name "level" :type :number :min "0"}])
              [:div
               [:input.mui-btn.mui-btn--raised {:type :submit :value "Add"}]])
+    [:div
+     [:h3 "Consider these"]
+     [:ul
+      (for [e oldest-untouched-exercises]
+        [:li (:name e)])]]
     [:div
      (let [grouped (->> exercises (group-by :day) sort reverse)]
        (for [[x es] grouped]

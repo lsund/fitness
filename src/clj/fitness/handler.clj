@@ -47,9 +47,17 @@
 (defn- app-routes [{:keys [db] :as config}]
   (routes
    (GET "/" []
-        (render/workout {:config config
-                         :exercises (db/all db :exercise)
-                         :indexed-exercises (db/indexed-exercises db)}))
+        (render/workout {:config
+                         config
+
+                         :oldest-untouched-exercises
+                         (db/oldest-untouched-exercises db)
+
+                         :exercises
+                         (db/all db :exercise)
+
+                         :indexed-exercises
+                         (db/indexed-exercises db)}))
    (POST "/add" {:keys [params]}
          (db/insert-row db
                         :exercise

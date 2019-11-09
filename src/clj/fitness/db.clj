@@ -63,14 +63,14 @@
   (map->Db {:db-config config}))
 
 (defn row [db table id]
-  (first (jdbc/query db [(str "SELECT * FROM " (name table) " WHERE id=?") id])))
+  (first (jdbc/query db [(str "select * from " (name table) " where id=?") id])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Query
 
 (defn value [db table column id]
   (-> db
-      (jdbc/query [(str "SELECT "
+      (jdbc/query [(str "select "
                         (name column)
                         " from "
                         (name table)
@@ -79,10 +79,10 @@
       column))
 
 (defn all [db table]
-  (jdbc/query db [(str "SELECT * FROM " (name table))]))
+  (jdbc/query db [(str "select * from " (name table))]))
 
 (defn all-where [db table clause]
-  (jdbc/query db [(str "SELECT * FROM " (name table) " WHERE " clause)]))
+  (jdbc/query db [(str "select * from " (name table) " where " clause)]))
 
 (defn id->name [db table id]
   (->> (all-where db table (str "id=" id))
@@ -90,30 +90,38 @@
        :name))
 
 (defn distinct-by-column [db column table]
-  (map column (jdbc/query db [(str "SELECT distinct(" (name column) ")"
-                                   " FROM " (name table))])))
+  (map column (jdbc/query db [(str "select distinct(" (name column) ")"
+                                   " from " (name table))])))
 
 (defn eid->name [db eid]
-  (-> (jdbc/query db ["SELECT name from exercise where exerciseid = ?" eid])
+  (-> (jdbc/query db ["select name from exercise where exerciseid = ?" eid])
       first
       :name))
 
 (defn indexed-exercises [db]
-  (jdbc/query db ["SELECT distinct(name), exerciseid
-                   FROM exercise
-                   ORDER BY name"]))
+  (jdbc/query db ["select distinct(name), exerciseid
+                   from exercise
+                   order by name"]))
 
 (defn squash-opponents [db]
-  (jdbc/query db ["SELECT distinct(opponent)
-                   FROM squash
-                   ORDER BY opponent"]))
+  (jdbc/query db ["select distinct(opponent)
+                   from squash
+                   order BY opponent"]))
 
 (defn new-exerciseid [db]
-  (if-let [id (-> (jdbc/query db ["SELECT max(exerciseid) from exercise"])
+  (if-let [id (-> (jdbc/query db ["select max(exerciseid) from exercise"])
                   first
                   :max)]
     (inc id)
     1))
+
+(defn oldest-untouched-exercises [db]
+  (jdbc/query db
+              ["select name, max(day)
+                from exercise
+                where exerciseid not in(12, 19, 9, 4, 25)
+                group by name
+                order by max;"]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modify

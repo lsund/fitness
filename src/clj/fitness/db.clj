@@ -122,7 +122,7 @@
                 where exerciseid not in(12, 19, 9, 4, 25)
                 group by name
                 order by max
-                limit 8;"]))
+                limit 5;"]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modify

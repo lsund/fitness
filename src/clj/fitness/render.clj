@@ -86,7 +86,7 @@
      [:h3 "Consider these"]
      [:ul
       (for [e oldest-untouched-exercises]
-        [:li (:name e)])]]
+        [:li (exercise->str e)])]]
     [:div
      (let [grouped (->> exercises (group-by :day) sort reverse)]
        (for [[x es] grouped]

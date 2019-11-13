@@ -102,6 +102,7 @@
       (for [e oldest-untouched-exercises]
         [:li (exercise->str e)])]]
     [:div
+     [:h3 "History"]
      (let [grouped (->> exercises (group-by :day) sort reverse)]
        (for [[x es] grouped]
          [:div

@@ -122,7 +122,7 @@
                 join exercise main on main.name = sub.name and sub.maxd = main.day
                 where exerciseid not in(12, 19, 9, 4, 25)
                 order by maxd
-                limit 8;"]))
+                limit 5;"]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modify

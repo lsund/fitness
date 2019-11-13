@@ -39,7 +39,7 @@
             (assoc :name name)
             (assoc :exerciseid eid)
             (util/update-all util/empty->nil)
-            (util/update-keys [:exerciseid :reps :sets :weight :level :distance]
+            (util/update-keys [:exerciseid :reps :sets :weight :level :distance :lowpulse :highpulse]
                               util/parse-int)
             (update :duration util/duration-str->int))]
     exercise))

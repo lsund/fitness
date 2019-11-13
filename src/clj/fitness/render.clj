@@ -16,7 +16,7 @@
      [:td [:input {:name "myscore" :type :number :min "0"}]]
      [:td [:input {:name "opponentscore" :type :number :min "0"}]]]]])
 
-(defn exercise->str [{:keys [name reps weight sets duration distance level]}]
+(defn exercise->str [{:keys [name reps weight sets duration distance level highpulse lowpulse] :as e}]
   (cond
     (and reps weight sets)
     (str name ": " reps "/" weight "x" sets)
@@ -24,7 +24,21 @@
     (and duration distance level)
     (str name ": "
          "level " level ", "
-         distance "m, " (util/int->duration-str duration))))
+         distance "m, " (util/int->duration-str duration))
+
+    (and duration highpulse lowpulse)
+    (str name ": "
+         "highpulse " highpulse ", "
+         "lowpulse " lowpulse ", "
+         (util/int->duration-str duration))
+
+    (and distance level)
+    (str name ": "
+         "level " level ", "
+         distance "m")
+
+    :else
+    (throw (Exception. (str "Cannot parse exercise: " e)))))
 
 (defn textfield [label input]
   [:div.mui-textfield

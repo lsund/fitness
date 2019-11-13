@@ -121,7 +121,7 @@
                 from (select name, max(day) as maxd from exercise group by name) as sub
                 join exercise main on main.name = sub.name and sub.maxd = main.day
                 where exerciseid not in(12, 19, 9, 4, 25)
-                order by maxd
+                order by maxd, name
                 limit 5;"]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

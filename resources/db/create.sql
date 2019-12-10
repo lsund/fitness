@@ -1,3 +1,7 @@
+CREATE DATABASE fitness;
+
+\connect fitness;
+
 CREATE TABLE Exercise
 (
     id              SERIAL PRIMARY KEY,
@@ -11,6 +15,7 @@ CREATE TABLE Exercise
     distance        INT,
     lowpulse        INT,
     highpulse       INT,
+    active          BOOLEAN,
     level           INT
 );
 

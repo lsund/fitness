@@ -38,6 +38,7 @@
             (dissoc :eid :new-name :new-check)
             (assoc :name name)
             (assoc :exerciseid eid)
+            (assoc :active true)
             (util/update-all util/empty->nil)
             (util/update-keys [:exerciseid :reps :sets :weight :level :distance :lowpulse :highpulse]
                               util/parse-int)
@@ -54,7 +55,7 @@
                          (db/oldest-untouched-exercises db)
 
                          :exercises
-                         (db/all db :exercise)
+                         (db/all-where db :exercise "active=true")
 
                          :indexed-exercises
                          (db/indexed-exercises db)}))

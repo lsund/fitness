@@ -101,6 +101,7 @@
 (defn indexed-exercises [db]
   (jdbc/query db ["select distinct(name), exerciseid
                    from exercise
+                   where active = true
                    order by name"]))
 
 (defn squash-opponents [db]
@@ -120,7 +121,7 @@
               ["select main.name, main.sets, main.reps, main.weight, main.duration, main.lowpulse, main.highpulse, main.level, sub.maxd
                 from (select name, max(day) as maxd from exercise group by name) as sub
                 join exercise main on main.name = sub.name and sub.maxd = main.day
-                where exerciseid not in(12, 19, 9, 4, 25)
+                where active = true
                 order by maxd, name
                 limit 5;"]))
 

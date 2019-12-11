@@ -54,8 +54,8 @@
                          :oldest-untouched-exercises
                          (db/oldest-untouched-exercises db)
 
-                         :exercises
-                         (db/all-where db :exercise "active=true")
+                         :historic-exercises
+                         (db/all db :exercise)
 
                          :indexed-exercises
                          (db/indexed-exercises db)}))

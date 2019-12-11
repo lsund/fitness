@@ -47,7 +47,7 @@
 
 (defn workout [{:keys [config
                        indexed-exercises
-                       exercises
+                       historic-exercises
                        oldest-untouched-exercises]}]
   (html5
    [:head
@@ -73,7 +73,7 @@
               {:id "newField"}
               [:input#newFieldText {:name "new-name"
                                     :type :text
-                                    :placeholder "New fooname"}]]
+                                    :placeholder "New"}]]
              (textfield "Sets"
                         [:input.mui-number {:id "sets"
                                             :name "sets"
@@ -124,7 +124,7 @@
         [:li (exercise->str e)])]]
     [:div
      [:h3 "History"]
-     (let [grouped (->> exercises (group-by :day) sort reverse)]
+     (let [grouped (->> historic-exercises (group-by :day) sort reverse)]
        (for [[x es] grouped]
          [:div
           [:p x]

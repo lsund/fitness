@@ -75,25 +75,46 @@
                                     :type :text
                                     :placeholder "New fooname"}]]
              (textfield "Sets"
-                        [:input.mui-number {:name "sets"
+                        [:input.mui-number {:id "sets"
+                                            :name "sets"
                                             :type :number
                                             :value 3
                                             :min "0"}])
              (textfield "Reps"
-                        [:input {:name "reps" :type :number :min "0"}])
+                        [:input {:id "reps"
+                                 :name "reps"
+                                 :type :number
+                                 :min "0"}])
              (textfield "Weight"
-                        [:input {:name "weight" :type :number :min "0"}])
+                        [:input {:id "weight"
+                                 :name "weight"
+                                 :type :number
+                                 :min "0"}])
              [:h3 "Add Cardio"]
              (textfield "Duration"
-                        [:input {:name "duration" :type :text}])
+                        [:input {:id "duration"
+                                 :name "duration"
+                                 :type :text}])
              (textfield "Distance"
-                        [:input {:name "distance" :type :number :min "0"}])
+                        [:input {:id "distance"
+                                 :name "distance"
+                                 :type :number
+                                 :min "0"}])
              (textfield "Lowpulse"
-                        [:td [:input {:name "lowpulse" :type :number :min "0"}]])
+                        [:td [:input {:id "lowpulse"
+                                      :name "lowpulse"
+                                      :type :number
+                                      :min "0"}]])
              (textfield "Highpulse"
-                        [:input {:name "highpulse" :type :number :min "0"}])
+                        [:input {:id "highpulse"
+                                 :name "highpulse"
+                                 :type :number
+                                 :min "0"}])
              (textfield "Level"
-                        [:input {:name "level" :type :number :min "0"}])
+                        [:input {:id "level"
+                                 :name "level"
+                                 :type :number
+                                 :min "0"}])
              [:div
               [:input.mui-btn.mui-btn--raised {:type :submit :value "Add"}]])
     [:div

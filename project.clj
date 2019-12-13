@@ -1,4 +1,4 @@
-(defproject fitness "1.14.0"
+(defproject fitness "1.15.0-SNAPSHOT"
   :description "TODO"
   :url "https://github.com/lsund/fitness"
   :min-lein-version "2.8.3"

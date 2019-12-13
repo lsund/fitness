@@ -2,6 +2,7 @@
   "Namespace for rendering views"
   (:require [hiccup.form :refer [form-to]]
             [hiccup.page :refer [html5 include-css include-js]]
+            [clojure.string :as string]
             [fitness.util :as util]
             [fitness.html :as html]))
 
@@ -40,6 +41,14 @@
     :else
     (throw (Exception. (str "Cannot parse exercise: " e)))))
 
+
+(defn map->query-string [m]
+  (str "?" (string/join "&" (map (fn [[k v]] (str (name k) "=" v)) m))))
+
+(defn exercise->astr [{:keys
+                       [name reps weight sets duration distance level highpulse lowpulse] :as m}]
+  [:a {:href (map->query-string m)} (exercise->str m)])
+
 (defn textfield [label input]
   [:div.mui-textfield
    [:label label]
@@ -48,7 +57,8 @@
 (defn workout [{:keys [config
                        indexed-exercises
                        historic-exercises
-                       oldest-untouched-exercises]}]
+                       oldest-untouched-exercises
+                       params]}]
   (html5
    [:head
     [:title "Workout"]]
@@ -78,23 +88,26 @@
                         [:input.mui-number {:id "sets"
                                             :name "sets"
                                             :type :number
-                                            :value 3
+                                            :value (:sets params)
                                             :min "0"}])
              (textfield "Reps"
                         [:input {:id "reps"
                                  :name "reps"
                                  :type :number
+                                 :value (:reps params)
                                  :min "0"}])
              (textfield "Weight"
                         [:input {:id "weight"
                                  :name "weight"
                                  :type :number
+                                 :value (:weight params)
                                  :min "0"}])
              [:h3 "Add Cardio"]
              (textfield "Duration"
                         [:input {:id "duration"
                                  :name "duration"
-                                 :type :text}])
+                                 :type :text
+                                 :value (:duration params)}])
              (textfield "Distance"
                         [:input {:id "distance"
                                  :name "distance"
@@ -104,16 +117,19 @@
                         [:td [:input {:id "lowpulse"
                                       :name "lowpulse"
                                       :type :number
+                                      :value (:lowpulse params)
                                       :min "0"}]])
              (textfield "Highpulse"
                         [:input {:id "highpulse"
                                  :name "highpulse"
                                  :type :number
+                                 :value (:highpulse params)
                                  :min "0"}])
              (textfield "Level"
                         [:input {:id "level"
                                  :name "level"
                                  :type :number
+                                 :value (:level params)
                                  :min "0"}])
              [:div
               [:input.mui-btn.mui-btn--raised {:type :submit :value "Add"}]])
@@ -121,7 +137,7 @@
      [:h3 "Consider these"]
      [:ul
       (for [e oldest-untouched-exercises]
-        [:li (exercise->str e)])]]
+        [:li (exercise->astr e)])]]
     [:div
      [:h3 "History"]
      (let [grouped (->> historic-exercises (group-by :day) sort reverse)]

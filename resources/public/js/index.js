@@ -6,6 +6,14 @@ var toggleHide = function () {
     if (newField == true) {
         document.getElementById("newField").style.display = "block";
         document.getElementById("selectField").style.display = "none";
+        document.getElementById("sets").value = ""
+        document.getElementById("reps").value = ""
+        document.getElementById("weight").value = ""
+        document.getElementById("duration").value = ""
+        document.getElementById("distance").value = ""
+        document.getElementById("highpulse").value = ""
+        document.getElementById("lowpulse").value = ""
+        document.getElementById("level").value = ""
     } else {
         document.getElementById("newFieldText").value = ""
         document.getElementById("newField").style.display = "none";

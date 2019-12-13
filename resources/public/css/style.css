@@ -1,3 +1,7 @@
+.nobullets {
+    list-style-type: none;
+}
+
 .hidden {
     visibility: hidden;
     position: absolute;
@@ -5,4 +9,17 @@
 
 body > * {
     margin-top: 50px;
+}
+
+.largeclickable {
+    width: 150px;
+    height: 75px;
+    border: 2px solid grey;
+    border-radius: 10px;
+}
+
+.largeclickable > a {
+    display: block;
+    height: 100%;
+    color: black;
 }

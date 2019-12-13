@@ -45,8 +45,7 @@
 (defn map->query-string [m]
   (str "?" (string/join "&" (map (fn [[k v]] (str (name k) "=" v)) m))))
 
-(defn exercise->astr [{:keys
-                       [name reps weight sets duration distance level highpulse lowpulse] :as m}]
+(defn exercise->astr [m]
   [:a {:href (map->query-string m)} (exercise->str m)])
 
 (defn textfield [label input]
@@ -137,9 +136,9 @@
               [:input.mui-btn.mui-btn--raised {:type :submit :value "Add"}]])
     [:div
      [:h3 "Consider these"]
-     [:ul
+     [:ul.nobullets
       (for [e oldest-untouched-exercises]
-        [:li (exercise->astr e)])]]
+        [:li [:div.largeclickable (exercise->astr e)]])]]
     [:div
      [:h3 "History"]
      (let [grouped (->> historic-exercises (group-by :day) sort reverse)]

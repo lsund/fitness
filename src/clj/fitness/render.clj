@@ -78,7 +78,9 @@
               {:id "selectField"}
               [:select {:name "eid"}
                (for [x indexed-exercises]
-                 [:option {:value (:exerciseid x)} (:name x)])]]
+                 (if (= (:name x) (:name params))
+                   [:option {:value (:exerciseid x) :selected "selected"} (:name x)]
+                   [:option {:value (:exerciseid x)} (:name x)]))]]
              [:div.mui-textfield
               {:id "newField"}
               [:input#newFieldText {:name "new-name"

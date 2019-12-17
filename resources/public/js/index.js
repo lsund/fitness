@@ -2,24 +2,31 @@ document.getElementById("newCheck").checked = false
 
 newField = false
 
+var hideElements = (xs) => {
+    xs.forEach(x => document.getElementById(x).style.display = "none");
+};
+
+var showElements = (xs) => {
+    xs.forEach(x => document.getElementById(x).style.display = "block");
+};
+
+var removeContentsOf = (xs) => {
+    xs.forEach(x => document.getElementById(x).value = "");
+};
+
 var toggleHide = function () {
     if (newField == true) {
         document.getElementById("newField").style.display = "block";
-        document.getElementById("selectField").style.display = "none";
-        document.getElementById("sets").value = ""
-        document.getElementById("reps").value = ""
-        document.getElementById("weight").value = ""
-        document.getElementById("duration").value = ""
-        document.getElementById("distance").value = ""
-        document.getElementById("highpulse").value = ""
-        document.getElementById("lowpulse").value = ""
-        document.getElementById("level").value = ""
+        hideElements(["selectField"]);
+        const textfields = ["sets" , "reps", "weight", "duration", "distance", "highpulse", "lowpulse", "level"];
+        removeContentsOf(textfields);
     } else {
         document.getElementById("newFieldText").value = ""
-        document.getElementById("newField").style.display = "none";
+        hideElements(["newField"]);
         document.getElementById("selectField").style.display = "block";
     }
     newField = !newField
+    maybeToggleCardio()
 }
 
 var some = function (x) {
@@ -30,18 +37,11 @@ var maybeToggleCardio = function () {
     const sets = document.getElementById("sets").value;
     const reps = document.getElementById("reps").value;
     const weight = document.getElementById("weight").value;
+    const cardioFields = ["duration", "distance", "lowpulse", "highpulse", "level"];
     if (some(sets) && some(reps) && some(weight)) {
-        document.getElementById("duration").style.display = "none";
-        document.getElementById("distance").style.display = "none";
-        document.getElementById("lowpulse").style.display = "none";
-        document.getElementById("highpulse").style.display = "none";
-        document.getElementById("level").style.display = "none";
+        hideElements(cardioFields);
     } else {
-        document.getElementById("duration").style.display = "block";
-        document.getElementById("distance").style.display = "block";
-        document.getElementById("lowpulse").style.display = "block";
-        document.getElementById("highpulse").style.display = "block";
-        document.getElementById("level").style.display = "block";
+        showElements(cardioFields);
     }
 }
 

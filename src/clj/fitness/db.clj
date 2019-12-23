@@ -89,9 +89,10 @@
        first
        :name))
 
-(defn distinct-by-column [db column table]
-  (map column (jdbc/query db [(str "select distinct(" (name column) ")"
-                                   " from " (name table))])))
+(defn distinct-by-column
+  [db table column & join-columns]
+  (jdbc/query db [(str "select distinct(" (name column) ")," (string/join "," (map name join-columns))
+                       " from " (name table))]))
 
 (defn eid->name [db eid]
   (-> (jdbc/query db ["select name from exercise where exerciseid = ?" eid])
@@ -140,7 +141,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Migrations
 
-;; 2019-08-13 Trainer -> Finances
+;; 2019-08-13 Trainer -> Fitness
 
 (defn import-trainer-exercise [db data]
   (doseq [record data]
@@ -157,6 +158,12 @@
 ;; 2019-08-14 Add exercise id
 
 (defn update-indices [db]
-  (doseq [[ename i] (map vector (distinct-by-column db :name :exercise) (range))]
+  (doseq [[ename i] (map vector (map :name (distinct-by-column db :exercise :name)) (range))]
     (doseq [e (all-where db :exercise (format "name = '%s'" ename))]
       (update-row db :exercise {:exerciseid i} (:id e)))))
+
+;; 2019-12-23 Add table exerciseid_name
+
+(defn foo [db]
+  (doseq [e (distinct-by-column db :exercise :exerciseid :name)]
+    (insert-row db :exerciseid_name e)))

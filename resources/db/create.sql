@@ -2,7 +2,7 @@ CREATE DATABASE fitness;
 
 \connect fitness;
 
-CREATE TABLE Exercise
+CREATE TABLE exercise
 (
     id              SERIAL PRIMARY KEY,
     exerciseid      INT,
@@ -19,7 +19,14 @@ CREATE TABLE Exercise
     level           INT
 );
 
-CREATE TABLE Squash
+CREATE TABLE exercise_id_name
+(
+    id              SERIAL PRIMARY KEY,
+    exerciseid      INT NOT NULL,
+    name            TEXT NOT NULL
+)
+
+CREATE TABLE squash
 (
     id              SERIAL PRIMARY KEY,
     opponent        VARCHAR(64) NOT NULL,

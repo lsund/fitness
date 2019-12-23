@@ -21,7 +21,7 @@
 ;; and no complicated skip/increment/decrement etc.
 ;;
 
-(defn make-named-exercise [db params]
+(defn make-exercise [db params]
   (let [{:keys [new-name eid]}
         params
 
@@ -36,6 +36,7 @@
         exercise
         (-> params
             (dissoc :eid :new-name :new-check)
+            (assoc :name name)
             (assoc :exerciseid eid)
             (assoc :active true)
             (assoc :day (util/today))
@@ -43,7 +44,7 @@
             (util/update-keys [:exerciseid :reps :sets :weight :level :distance :lowpulse :highpulse]
                               util/parse-int)
             (update :duration util/duration-str->int))]
-    [exercise name]))
+    exercise))
 
 (defn- app-routes [{:keys [db] :as config}]
   (routes
@@ -62,8 +63,9 @@
 
                          :params (:params m)}))
    (POST "/add" {:keys [params]}
-         (let [[exercise ename] (make-named-exercise db params)]
-              (db/insert-row db :exercise exercise))
+         (let [exercise (make-exercise db params)]
+           (db/insert-row db :exercise (dissoc :name exercise))
+           (db/insert-row db :exerciseid_name (select-keys exercise [:exerciseid :name])))
          (redirect "/"))
    (GET "/squash" []
         (render/squash {:config config

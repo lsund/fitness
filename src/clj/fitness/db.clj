@@ -84,24 +84,19 @@
 (defn all-where [db table clause]
   (jdbc/query db [(str "select * from " (name table) " where " clause)]))
 
-(defn id->name [db table id]
-  (->> (all-where db table (str "id=" id))
-       first
-       :name))
-
 (defn distinct-by-column
   [db table column & join-columns]
   (jdbc/query db [(str "select distinct(" (name column) ")," (string/join "," (map name join-columns))
                        " from " (name table))]))
 
 (defn eid->name [db eid]
-  (-> (jdbc/query db ["select name from exercise where exerciseid = ?" eid])
+  (-> (jdbc/query db ["select name from exerciseid_name where exerciseid = ?" eid])
       first
       :name))
 
 (defn indexed-exercises [db]
-  (jdbc/query db ["select distinct(name), exerciseid
-                   from exercise
+  (jdbc/query db ["select distinct(exerciseid_name.name), exercise.exerciseid
+                   from exercise inner join exerciseid_name on exercise.exerciseid = exerciseid_name.exerciseid
                    where active = true
                    order by name"]))
 
@@ -119,11 +114,26 @@
 
 (defn oldest-untouched-exercises [db]
   (jdbc/query db
-              ["select main.name, main.sets, main.reps, main.weight, main.duration, main.lowpulse, main.highpulse, main.level, sub.maxd
-                from (select name, max(day) as maxd from exercise group by name) as sub
-                join exercise main on main.name = sub.name and sub.maxd = main.day
+              ["select  exerciseid_name.name,
+                        main.exerciseid,
+                        main.sets,
+                        main.reps,
+                        main.weight,
+                        main.duration,
+                        main.lowpulse,
+                        main.highpulse,
+                        main.level,
+                        sub.maxd
+                from (select exerciseid,
+                             max(day) as maxd
+                from exercise group by exerciseid) as sub
+                join exercise main
+                on main.exerciseid = sub.exerciseid
+                and sub.maxd = main.day
+                inner join exerciseid_name
+                on exerciseid_name.exerciseid = main.exerciseid
                 where active = true
-                order by maxd, name
+                order by maxd, exerciseid_name.name
                 limit 5;"]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -164,6 +174,6 @@
 
 ;; 2019-12-23 Add table exerciseid_name
 
-(defn foo [db]
+(defn exercise->exerciseid_name [db]
   (doseq [e (distinct-by-column db :exercise :exerciseid :name)]
     (insert-row db :exerciseid_name e)))

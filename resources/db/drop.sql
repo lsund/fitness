@@ -1,3 +1,3 @@
 DROP TABLE Exercise;
-DROP TABLE SquashResult;
-DROP TABLE SquashOpponent;
+DROP TABLE Squash;
+DROP TABLE exerciseid_name;

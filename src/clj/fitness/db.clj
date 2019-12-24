@@ -148,6 +148,11 @@
 (defn insert-row [db table insert-map]
   (jdbc/insert! db table insert-map))
 
+(defn insert-unique-exercisename [db table insert-map]
+  (jdbc/execute! db ["insert into exerciseid_name (exerciseid, name) values (?, ?) on conflict do nothing"
+                     (:exerciseid insert-map)
+                     (:name insert-map)]))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Migrations
 

@@ -5,7 +5,7 @@ CREATE DATABASE fitness;
 CREATE TABLE exercise
 (
     id              SERIAL PRIMARY KEY,
-    exerciseid      INT,
+    exerciseid      INT UNIQUE,
     name            VARCHAR(64) NOT NULL,
     day             DATE NOT NULL,
     sets            INT,
@@ -22,7 +22,7 @@ CREATE TABLE exercise
 CREATE TABLE exercise_id_name
 (
     id              SERIAL PRIMARY KEY,
-    exerciseid      INT NOT NULL,
+    exerciseid      INT UNIQUE NOT NULL,
     name            TEXT NOT NULL
 )
 

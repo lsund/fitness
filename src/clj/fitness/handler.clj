@@ -64,8 +64,8 @@
                          :params (:params m)}))
    (POST "/add" {:keys [params]}
          (let [exercise (make-exercise db params)]
-           (db/insert-row db :exercise (dissoc :name exercise))
-           (db/insert-row db :exerciseid_name (select-keys exercise [:exerciseid :name])))
+           (db/insert-row db :exercise (dissoc exercise :name))
+           (db/insert-unique-exercisename db :exerciseid_name exercise))
          (redirect "/"))
    (GET "/squash" []
         (render/squash {:config config

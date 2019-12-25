@@ -56,16 +56,16 @@
                          (db/oldest-untouched-exercises db)
 
                          :historic-exercises
-                         (db/all db :exercise)
+                         (db/all-join-another db :exercise :exerciseid_name :exerciseid :name)
 
                          :indexed-exercises
-                         (db/indexed-exercises db)
+                         (db/all db :exerciseid_name)
 
                          :params (:params m)}))
    (POST "/add" {:keys [params]}
          (let [exercise (make-exercise db params)]
            (db/insert-row db :exercise (dissoc exercise :name))
-           (db/insert-unique-exercisename db :exerciseid_name exercise))
+           (db/insert-unique-exercise db :exerciseid_name exercise))
          (redirect "/"))
    (GET "/squash" []
         (render/squash {:config config

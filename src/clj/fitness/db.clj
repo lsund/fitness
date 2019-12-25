@@ -81,6 +81,20 @@
 (defn all [db table]
   (jdbc/query db [(str "select * from " (name table))]))
 
+(defn all-join-another [db table join-table join-column other]
+  (jdbc/query db [(->> ["select %s.*, %s.%s from %s inner join %s on %s.%s = %s.%s"
+                        table
+                        join-table
+                        other
+                        table
+                        join-table
+                        table
+                        join-column
+                        join-table
+                        join-column]
+                       (map name)
+                       (apply format))]))
+
 (defn all-where [db table clause]
   (jdbc/query db [(str "select * from " (name table) " where " clause)]))
 
@@ -93,12 +107,6 @@
   (-> (jdbc/query db ["select name from exerciseid_name where exerciseid = ?" eid])
       first
       :name))
-
-(defn indexed-exercises [db]
-  (jdbc/query db ["select distinct(exerciseid_name.name), exercise.exerciseid
-                   from exercise inner join exerciseid_name on exercise.exerciseid = exerciseid_name.exerciseid
-                   where active = true
-                   order by name"]))
 
 (defn squash-opponents [db]
   (jdbc/query db ["select distinct(opponent)
@@ -148,7 +156,7 @@
 (defn insert-row [db table insert-map]
   (jdbc/insert! db table insert-map))
 
-(defn insert-unique-exercisename [db table insert-map]
+(defn insert-unique-exercise [db table insert-map]
   (jdbc/execute! db ["insert into exerciseid_name (exerciseid, name) values (?, ?) on conflict do nothing"
                      (:exerciseid insert-map)
                      (:name insert-map)]))

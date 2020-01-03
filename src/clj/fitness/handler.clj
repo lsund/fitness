@@ -59,7 +59,7 @@
                          (db/all-join-another db :exercise :exerciseid_name :exerciseid :name)
 
                          :indexed-exercises
-                         (db/all db :exerciseid_name)
+                         (sort-by :name (db/all db :exerciseid_name))
 
                          :params (:params m)}))
    (POST "/add" {:keys [params]}

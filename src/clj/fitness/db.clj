@@ -142,7 +142,7 @@
                 on exerciseid_name.exerciseid = main.exerciseid
                 where active = true
                 order by maxd, exerciseid_name.name
-                limit 5;"]))
+                limit 8;"]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modify

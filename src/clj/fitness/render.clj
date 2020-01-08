@@ -56,6 +56,7 @@
 (defn workout [{:keys [config
                        indexed-exercises
                        historic-exercises
+                       daily-standard-exercises
                        oldest-untouched-exercises
                        params]}]
   (html5
@@ -134,6 +135,11 @@
                                  :min "0"}])
              [:div
               [:input.mui-btn.mui-btn--raised {:type :submit :value "Add"}]])
+    [:div
+     [:h3 "Standard Exercises"]
+     [:ul.nobullets
+      (for [e daily-standard-exercises]
+        [:li [:div.largeclickable (exercise->astr e)]])]]
     [:div
      [:h3 "Consider these"]
      [:ul.nobullets

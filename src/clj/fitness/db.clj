@@ -144,6 +144,16 @@
                 order by maxd, exerciseid_name.name
                 limit 8;"]))
 
+(defn daily-standard-exercises [db]
+  (jdbc/query db
+              ["select * from (
+                    select exerciseid_name.name, e1.* from exercise as e1
+                    inner join exerciseid_name
+                    on exerciseid_name.exerciseid = e1.exerciseid
+                    where not exists (select * from exercise as e2 where e2.exerciseid = e1.exerciseid and e2.day > e1.day)
+                    and standard = true) as sub
+                where sub.day != now()::date"]))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Modify
 

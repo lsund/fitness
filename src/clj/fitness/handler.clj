@@ -55,6 +55,9 @@
                          :oldest-untouched-exercises
                          (db/oldest-untouched-exercises db)
 
+                         :daily-standard-exercises
+                         (db/daily-standard-exercises db)
+
                          :historic-exercises
                          (db/all-join-another db :exercise :exerciseid_name :exerciseid :name)
 

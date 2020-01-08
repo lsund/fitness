@@ -68,7 +68,9 @@
    (POST "/add" {:keys [params]}
          (let [exercise (make-exercise db params)]
            (db/insert-row db :exercise (dissoc exercise :name))
-           (db/insert-unique-exercise db :exerciseid_name exercise))
+           (db/insert-unique-exercise db :exerciseid_name exercise)
+           ;; TODO remove this
+           (db/hack-update-standard db))
          (redirect "/"))
    (GET "/squash" []
         (render/squash {:config config

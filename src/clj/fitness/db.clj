@@ -171,6 +171,10 @@
                      (:exerciseid insert-map)
                      (:name insert-map)]))
 
+;; TODO remove this
+(defn hack-update-standard [db]
+  (jdbc/execute! db [" update exercise set standard = true where exerciseid in (18, 21, 19, 8, 38, 39)"]))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Migrations
 

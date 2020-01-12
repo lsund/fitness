@@ -104,7 +104,7 @@
                        " from " (name table))]))
 
 (defn eid->name [db eid]
-  (-> (jdbc/query db ["select name from exerciseid_name where exerciseid = ?" eid])
+  (-> (jdbc/query db ["select name from exercise_meta where exerciseid = ?" eid])
       first
       :name))
 
@@ -122,7 +122,7 @@
 
 (defn oldest-untouched-exercises [db]
   (jdbc/query db
-              ["select  exerciseid_name.name,
+              ["select  exercise_meta.name,
                         main.exerciseid,
                         main.sets,
                         main.reps,
@@ -138,18 +138,18 @@
                 join exercise main
                 on main.exerciseid = sub.exerciseid
                 and sub.maxd = main.day
-                inner join exerciseid_name
-                on exerciseid_name.exerciseid = main.exerciseid
+                inner join exercise_meta
+                on exercise_meta.exerciseid = main.exerciseid
                 where active = true
-                order by maxd, exerciseid_name.name
+                order by maxd, exercise_meta.name
                 limit 8;"]))
 
 (defn daily-standard-exercises [db]
   (jdbc/query db
               ["select * from (
-                    select exerciseid_name.name, e1.* from exercise as e1
-                    inner join exerciseid_name
-                    on exerciseid_name.exerciseid = e1.exerciseid
+                    select exercise_meta.name, e1.* from exercise as e1
+                    inner join exercise_meta
+                    on exercise_meta.exerciseid = e1.exerciseid
                     where not exists (select * from exercise as e2 where e2.exerciseid = e1.exerciseid and e2.day > e1.day)
                     and standard = true) as sub
                 where sub.day != now()::date"]))
@@ -167,7 +167,7 @@
   (jdbc/insert! db table insert-map))
 
 (defn insert-unique-exercise [db table insert-map]
-  (jdbc/execute! db ["insert into exerciseid_name (exerciseid, name) values (?, ?) on conflict do nothing"
+  (jdbc/execute! db ["insert into exercise_meta (exerciseid, name) values (?, ?) on conflict do nothing"
                      (:exerciseid insert-map)
                      (:name insert-map)]))
 
@@ -199,8 +199,8 @@
     (doseq [e (all-where db :exercise (format "name = '%s'" ename))]
       (update-row db :exercise {:exerciseid i} (:id e)))))
 
-;; 2019-12-23 Add table exerciseid_name
+;; 2019-12-23 Add table exercise_meta
 
-(defn exercise->exerciseid_name [db]
+(defn exercise->exercise_meta [db]
   (doseq [e (distinct-by-column db :exercise :exerciseid :name)]
-    (insert-row db :exerciseid_name e)))
+    (insert-row db :exercise_meta e)))

@@ -1,3 +1,3 @@
 DROP TABLE Exercise;
 DROP TABLE Squash;
-DROP TABLE exerciseid_name;
+DROP TABLE exercise_meta;

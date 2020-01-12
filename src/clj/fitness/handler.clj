@@ -59,16 +59,16 @@
                          (db/daily-standard-exercises db)
 
                          :historic-exercises
-                         (db/all-join-another db :exercise :exerciseid_name :exerciseid :name)
+                         (db/all-join-another db :exercise :exercise_meta :exerciseid :name)
 
                          :indexed-exercises
-                         (sort-by :name (db/all db :exerciseid_name))
+                         (sort-by :name (db/all db :exercise_meta))
 
                          :params (:params m)}))
    (POST "/add" {:keys [params]}
          (let [exercise (make-exercise db params)]
            (db/insert-row db :exercise (dissoc exercise :name))
-           (db/insert-unique-exercise db :exerciseid_name exercise)
+           (db/insert-unique-exercise db :exercise_meta exercise)
            ;; TODO remove this
            (db/hack-update-standard db))
          (redirect "/"))

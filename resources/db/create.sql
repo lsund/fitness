@@ -19,7 +19,7 @@ CREATE TABLE exercise
     level           INT
 );
 
-CREATE TABLE exercise_id_name
+CREATE TABLE exercise_meta
 (
     id              SERIAL PRIMARY KEY,
     exerciseid      INT UNIQUE NOT NULL,

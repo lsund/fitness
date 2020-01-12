@@ -147,11 +147,11 @@
 (defn daily-standard-exercises [db]
   (jdbc/query db
               ["select * from (
-                    select exercise_meta.name, e1.* from exercise as e1
+                    select exercise_meta.standard, exercise_meta.name, e1.* from exercise as e1
                     inner join exercise_meta
                     on exercise_meta.exerciseid = e1.exerciseid
                     where not exists (select * from exercise as e2 where e2.exerciseid = e1.exerciseid and e2.day > e1.day)
-                    and standard = true) as sub
+                    and exercise_meta.standard = true) as sub
                 where sub.day != now()::date"]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

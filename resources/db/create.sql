@@ -5,8 +5,7 @@ CREATE DATABASE fitness;
 CREATE TABLE exercise
 (
     id              SERIAL PRIMARY KEY,
-    exerciseid      INT UNIQUE,
-    name            VARCHAR(64) NOT NULL,
+    exerciseid      INT,
     day             DATE NOT NULL,
     sets            INT,
     reps            INT,
@@ -16,15 +15,17 @@ CREATE TABLE exercise
     lowpulse        INT,
     highpulse       INT,
     active          BOOLEAN,
-    level           INT
+    level           INT,
+    standard        BOOLEAN
 );
 
 CREATE TABLE exercise_meta
 (
     id              SERIAL PRIMARY KEY,
     exerciseid      INT UNIQUE NOT NULL,
+    standard        BOOLEAN,
     name            TEXT NOT NULL
-)
+);
 
 CREATE TABLE squash
 (

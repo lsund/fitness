@@ -46,6 +46,14 @@
             (update :duration util/duration-str->int))]
     exercise))
 
+(defn- contains-some [m k]
+  (and (contains? m k) (not (nil? (k m)))))
+
+(defn valid [exercise]
+  (or (every? #(contains-some exercise %) [:reps :sets :weight])
+      (every? #(contains-some exercise %) [:distance :level :duration])
+      (every? #(contains-some exercise %) [:duration :level :highpulse :lowpulse])))
+
 (defn- app-routes [{:keys [db] :as config}]
   (routes
    (GET "/" m
@@ -67,6 +75,7 @@
                          :params (:params m)}))
    (POST "/add" {:keys [params]}
          (let [exercise (make-exercise db params)]
+           (when (not (valid exercise)) (throw (Exception. "Invalid exercise")))
            (db/insert-row db :exercise (dissoc exercise :name))
            (db/insert-unique-exercise db :exercise_meta exercise)
            ;; TODO remove this
